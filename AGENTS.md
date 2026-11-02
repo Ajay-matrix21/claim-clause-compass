@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep appeal draft state in the appeal page and browser-only text delivery in a dedicated utility so editing and export require no document uploads or server processing.
