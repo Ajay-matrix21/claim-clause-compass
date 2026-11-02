@@ -155,7 +155,7 @@ function Results() {
           <div>
             <h1 className="text-3xl font-semibold tracking-tight text-primary">Claim Analysis Report</h1>
             <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-              <span className="font-mono">Sample claim reference: {summary.reference}</span>
+              <span className="font-mono">Sample claim reference: {DEMO_REPORT.reference}</span>
               <span className="inline-flex items-center rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 text-xs font-medium text-warning">
                 Sample Analysis
               </span>
