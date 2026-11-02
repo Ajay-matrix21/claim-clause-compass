@@ -1,3 +1,10 @@
-// In-memory only: selected file names for the current browser session. Never persisted or uploaded.
 export type DocKey = "rejection" | "policy" | "discharge";
-export const claimSession: { fileNames: Partial<Record<DocKey, string>> } = { fileNames: {} };
+export type ClaimFiles = Record<DocKey, File | null>;
+
+export function emptyClaimFiles(): ClaimFiles {
+  return { rejection: null, policy: null, discharge: null };
+}
+
+export function hasRequiredDocuments(files: ClaimFiles): boolean {
+  return Boolean(files.rejection && files.policy && files.discharge);
+}

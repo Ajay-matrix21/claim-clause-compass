@@ -9,4 +9,5 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep appeal draft state in the appeal page and browser-only text delivery in a dedicated utility so editing and export require no document uploads or server processing.
+- Keep the current journey in a React context provider mounted above the routes, never in module-global mutable state or browser storage, so files survive navigation but remain isolated per app instance and clear on refresh or reset.
+- Keep the editable appeal state in the appeal page, with its current text retained by the journey provider on edits; browser-only text delivery belongs in a dedicated utility so editing and export need no uploads or server processing.

@@ -45,8 +45,9 @@ function Index() {
             Your Insurance Claim Deserves a Clear Explanation.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            ClaimGuard AI compares your rejection letter, policy wording and hospital documents side by side — so you understand why a claim was denied and what to do next.
+            Explore a fictional example of a rejection letter, policy wording and hospital documents compared side by side.
           </p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-secondary">DEMO — FICTIONAL SAMPLE DATA. Documents are not processed or uploaded.</p>
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <ButtonLink to="/upload">Analyze My Claim <ArrowRight className="size-4" /></ButtonLink>
             <ButtonLink href="#how-it-works" variant="outline">How It Works</ButtonLink>
