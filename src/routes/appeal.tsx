@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { AlertTriangle, ArrowLeft, Check, Copy, Download, FileText } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Check, Copy, Download, FileText, ClipboardList, RotateCcw } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { createAppealFile, deliverAppeal, SAMPLE_APPEAL } from "@/lib/appeal-document";
+import { useClaimWorkflow, WorkflowEmptyState } from "@/components/claim-workflow";
 
 export const Route = createFileRoute("/appeal")({
   head: () => ({
@@ -21,7 +22,8 @@ export const Route = createFileRoute("/appeal")({
 });
 
 function Appeal() {
-  const [letter, setLetter] = useState(SAMPLE_APPEAL);
+  const { ready, draft, setDraft, reset } = useClaimWorkflow();
+  const [letter, setLetter] = useState(draft ?? SAMPLE_APPEAL);
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -43,6 +45,8 @@ function Appeal() {
     }
   }
 
+  if (!ready) return <WorkflowEmptyState appeal />;
+
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
@@ -56,9 +60,9 @@ function Appeal() {
             <h1 className="text-3xl font-semibold text-primary">Prepare Your Appeal</h1>
             <p className="mt-2 text-sm text-muted-foreground">Sample analysis reference: <span className="font-mono">CG-DEMO-001</span></p>
           </div>
-          <Button asChild variant="outline" className="h-10 rounded-lg bg-card">
+          <div className="flex flex-wrap gap-2"><Button asChild variant="outline" className="h-10 rounded-lg bg-card">
             <Link to="/results"><ArrowLeft aria-hidden />Back to Analysis</Link>
-          </Button>
+          </Button><Button asChild variant="outline" className="h-10 rounded-lg bg-card"><Link to="/upload" onClick={reset}><ClipboardList aria-hidden />Start New Analysis</Link></Button></div>
         </header>
 
         <section aria-labelledby="summary-heading" className="mt-8 border-y py-6">
@@ -83,12 +87,13 @@ function Appeal() {
             </div>
           </div>
           <p role="status" aria-live="polite" className="mt-2 min-h-5 text-sm text-secondary">{notice}</p>
+          {!letter.trim() && <div className="mt-3 flex flex-wrap items-center gap-3 border-y py-4"><p className="text-sm text-muted-foreground">Your draft is empty.</p><Button variant="outline" onClick={() => { setLetter(SAMPLE_APPEAL); setDraft(SAMPLE_APPEAL); setNotice(""); }}><RotateCcw aria-hidden />Restore Sample Draft</Button></div>}
           <Textarea
             aria-label="Appeal letter"
             aria-describedby="draft-disclaimer"
             spellCheck
             value={letter}
-            onChange={(event) => { setLetter(event.target.value); setCopied(false); setNotice(""); }}
+            onChange={(event) => { setLetter(event.target.value); setDraft(event.target.value); setCopied(false); setNotice(""); }}
             className="mt-3 min-h-[820px] resize-y rounded-lg bg-card p-5 text-sm leading-7 shadow-card sm:p-10 md:text-sm"
           />
         </section>

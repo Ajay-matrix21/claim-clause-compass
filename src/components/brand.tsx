@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { ShieldCheck, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useClaimWorkflow } from "@/components/claim-workflow";
 
 export function Logo() {
   return (
@@ -15,8 +17,9 @@ export function Logo() {
 }
 
 export function ButtonLink({
-  to, href, children, variant = "primary", className,
-}: { to?: "/" | "/upload" | "/results" | "/appeal"; href?: string; children: ReactNode; variant?: "primary" | "outline"; className?: string }) {
+  to, href, children, variant = "primary", className, resetAnalysis = false,
+}: { to?: "/" | "/upload" | "/results" | "/appeal"; href?: string; children: ReactNode; variant?: "primary" | "outline"; className?: string; resetAnalysis?: boolean }) {
+  const { reset } = useClaimWorkflow();
   const cls = cn(
     "inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
     variant === "primary"
@@ -24,7 +27,7 @@ export function ButtonLink({
       : "border bg-card text-foreground hover:bg-accent",
     className,
   );
-  return to ? <Link to={to} className={cls}>{children}</Link> : <a href={href} className={cls}>{children}</a>;
+  return to ? <Link to={to} onClick={resetAnalysis ? reset : undefined} className={cls}>{children}</Link> : <a href={href} className={cls}>{children}</a>;
 }
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
@@ -38,8 +41,8 @@ export function IconBadge({ children }: { children: ReactNode }) {
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const links = [
-    { href: "/#how-it-works", label: "How It Works" },
-    { href: "/#features", label: "Features" },
+    { hash: "how-it-works", label: "How It Works" },
+    { hash: "features", label: "Features" },
   ];
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
@@ -47,18 +50,18 @@ export function SiteHeader() {
         <Logo />
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-muted-foreground hover:text-foreground">{l.label}</a>
+            <Link key={l.hash} to="/" hash={l.hash} className="text-sm text-muted-foreground hover:text-foreground">{l.label}</Link>
           ))}
           <ButtonLink to="/upload">Start Analysis</ButtonLink>
         </nav>
-        <button className="md:hidden" aria-label="Toggle menu" onClick={() => setOpen(!open)}>
+        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen(!open)}>
           {open ? <X /> : <Menu />}
-        </button>
+        </Button>
       </div>
       {open && (
         <nav className="flex flex-col gap-4 border-t px-4 py-4 md:hidden">
           {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-sm">{l.label}</a>
+            <Link key={l.hash} to="/" hash={l.hash} onClick={() => setOpen(false)} className="text-sm">{l.label}</Link>
           ))}
           <ButtonLink to="/upload">Start Analysis</ButtonLink>
         </nav>

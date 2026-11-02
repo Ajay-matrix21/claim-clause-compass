@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter, Card, ButtonLink } from "@/components/brand";
 import { cn } from "@/lib/utils";
+import { useClaimWorkflow, WorkflowEmptyState } from "@/components/claim-workflow";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -131,6 +132,8 @@ function ReportField({ label, value, className }: { label: string; value: string
 }
 
 function Results() {
+  const { ready } = useClaimWorkflow();
+  if (!ready) return <WorkflowEmptyState />;
   const { summary, columns, assessment, trail, nextSteps } = DEMO_REPORT;
   return (
     <div className="flex min-h-screen flex-col">
@@ -161,10 +164,12 @@ function Results() {
               </span>
             </p>
           </div>
-          <ButtonLink to="/upload" variant="outline">
+          <ButtonLink to="/upload" variant="outline" resetAnalysis>
             <ClipboardList className="size-4" /> Start New Analysis
           </ButtonLink>
         </header>
+
+        <div className="mt-5"><ButtonLink to="/upload" variant="outline"><ArrowLeft className="size-4" aria-hidden />Back to Upload</ButtonLink></div>
 
         {/* Claim summary */}
         <Card className="mt-8">

@@ -1,6 +1,7 @@
 import { useRef, useState, type DragEvent } from "react";
 import { UploadCloud, FileText, CheckCircle2, AlertCircle, RefreshCw, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 const ACCEPTED_EXT = /\.(pdf|jpe?g|png)$/i;
@@ -21,20 +22,21 @@ function typeLabel(file: File) {
 }
 
 export function FileUploadCard({
-  title, description, file, onChange, missing,
+  title, description, file, onChange, missing, disabled = false,
 }: {
   title: string;
   description: string;
   file: File | null;
   onChange: (file: File | null) => void;
   missing?: boolean;
+  disabled?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const accept = (f: File | undefined) => {
-    if (!f) return;
+    if (!f || disabled) return;
     if (!isAcceptedFile(f)) {
       setError(`"${f.name}" is not supported. Please upload a PDF, JPG or PNG file.`);
       return;
@@ -58,12 +60,13 @@ export function FileUploadCard({
           <h3 className="font-semibold">{title}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
-        {file && <CheckCircle2 className="size-5 shrink-0 text-success" aria-label="Uploaded" />}
+        {file && <CheckCircle2 className="size-5 shrink-0 text-success" aria-label="Selected locally" />}
       </div>
 
       <input
         ref={inputRef}
         type="file"
+        disabled={disabled}
         accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
         className="hidden"
         aria-label={`Upload ${title}`}
@@ -80,30 +83,32 @@ export function FileUploadCard({
             </div>
           </div>
           <div className="mt-3 flex gap-2">
-            <button type="button" onClick={browse} className="inline-flex items-center gap-1.5 rounded-md border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
+            <Button disabled={disabled} variant="outline" size="sm" type="button" onClick={browse} className="bg-card">
               <RefreshCw className="size-3.5" /> Replace
-            </button>
-            <button type="button" onClick={() => { onChange(null); setError(null); }} className="inline-flex items-center gap-1.5 rounded-md border bg-card px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10">
+            </Button>
+            <Button disabled={disabled} variant="outline" size="sm" type="button" onClick={() => { onChange(null); setError(null); }} className="bg-card text-destructive hover:bg-destructive/10">
               <Trash2 className="size-3.5" /> Remove
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
-        <button
+        <Button
           type="button"
+          disabled={disabled}
+          variant="outline"
           onClick={browse}
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
           className={cn(
-            "mt-4 flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors hover:bg-accent/50",
+            "mt-4 h-auto w-full flex-col gap-0 whitespace-normal rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors hover:bg-accent/50",
             dragging && "border-secondary bg-accent",
           )}
         >
           <UploadCloud className="size-7 text-secondary" />
           <p className="mt-2 text-sm font-medium">Drag and drop, or <span className="text-secondary">browse files</span></p>
           <p className="mt-1 text-xs text-muted-foreground">PDF, JPG or PNG</p>
-        </button>
+        </Button>
       )}
 
       {error && (
