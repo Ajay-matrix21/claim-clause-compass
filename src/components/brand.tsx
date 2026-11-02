@@ -16,7 +16,7 @@ export function Logo() {
 
 export function ButtonLink({
   to, href, children, variant = "primary", className,
-}: { to?: "/upload" | "/"; href?: string; children: ReactNode; variant?: "primary" | "outline"; className?: string }) {
+}: { to?: "/" | "/upload" | "/results" | "/appeal"; href?: string; children: ReactNode; variant?: "primary" | "outline"; className?: string }) {
   const cls = cn(
     "inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
     variant === "primary"
