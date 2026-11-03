@@ -18,7 +18,7 @@ export function Logo() {
 
 export function ButtonLink({
   to, href, children, variant = "primary", className, resetAnalysis = false,
-}: { to?: "/" | "/upload" | "/results" | "/appeal"; href?: string; children: ReactNode; variant?: "primary" | "outline"; className?: string; resetAnalysis?: boolean }) {
+}: { to?: "/" | "/upload" | "/processing" | "/results" | "/appeal"; href?: string; children: ReactNode; variant?: "primary" | "outline"; className?: string; resetAnalysis?: boolean }) {
   const { reset } = useClaimWorkflow();
   const cls = cn(
     "inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
