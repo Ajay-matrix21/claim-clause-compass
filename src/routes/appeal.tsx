@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { createAppealFile, deliverAppeal, SAMPLE_APPEAL } from "@/lib/appeal-document";
 import { useClaimWorkflow, WorkflowEmptyState } from "@/components/claim-workflow";
+import { Reveal } from "@/lib/reveal";
 
 export const Route = createFileRoute("/appeal")({
   head: () => ({
@@ -51,13 +52,14 @@ function Appeal() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 md:py-14">
-        <div role="note" className="flex items-start gap-3 rounded-lg border border-warning/40 bg-warning/10 p-4 text-sm leading-relaxed">
-          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warning" aria-hidden />
+        <div role="note" className="flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm leading-relaxed">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warning-strong" aria-hidden />
           <p><strong>DEMO — FICTIONAL SAMPLE DATA.</strong> This draft is based only on the fictional sample analysis, not your uploaded documents or a real policy or insurance decision.</p>
         </div>
+
         <header className="mt-8 flex flex-col items-start justify-between gap-4 sm:flex-row">
           <div>
-            <h1 className="text-3xl font-semibold text-primary">Prepare Your Appeal</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-primary">Prepare Your Appeal</h1>
             <p className="mt-2 text-sm text-muted-foreground">Sample analysis reference: <span className="font-mono">CG-DEMO-001</span></p>
           </div>
           <div className="flex flex-wrap gap-2"><Button asChild variant="outline" className="h-10 rounded-lg bg-card">
@@ -65,40 +67,53 @@ function Appeal() {
           </Button><Button asChild variant="outline" className="h-10 rounded-lg bg-card"><Link to="/upload" onClick={reset}><ClipboardList aria-hidden />Start New Analysis</Link></Button></div>
         </header>
 
-        <section aria-labelledby="summary-heading" className="mt-8 border-y py-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 id="summary-heading" className="text-lg font-semibold">Fictional Analysis Summary</h2>
-            <span className="rounded-md border border-secondary/25 bg-secondary/5 px-2.5 py-1 text-xs font-medium text-secondary">Potentially contestable · sample only</span>
-          </div>
-          <dl className="mt-5 grid gap-5 md:grid-cols-[1fr_1.5fr_1.5fr]">
-            <div><dt className="text-xs font-medium text-muted-foreground">CLAIM</dt><dd className="mt-1 text-sm leading-relaxed">Individual Health Insurance<br /><span className="text-destructive">Rejected</span></dd></div>
-            <div><dt className="text-xs font-medium text-muted-foreground">STATED REJECTION REASON</dt><dd className="mt-1 text-sm leading-relaxed">Hospitalisation within the initial waiting period.</dd></div>
-            <div><dt className="text-xs font-medium text-muted-foreground">POSSIBLE MISMATCH</dt><dd className="mt-1 text-sm leading-relaxed">The fictional policy has an accidental-injury exception; the fictional medical record describes a fall and wrist fracture.</dd></div>
-          </dl>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Policy inception date, issued policy wording and the insurer’s classification of admission are unverified. A real review may reach a different conclusion.</p>
-        </section>
-
-        <section aria-labelledby="letter-heading" className="mt-8">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-            <h2 id="letter-heading" className="flex items-center gap-2 text-lg font-semibold"><FileText className="size-5 text-secondary" aria-hidden />Appeal Letter <span className="ml-1 text-xs font-normal text-muted-foreground">Draft</span></h2>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" className="h-10 rounded-lg bg-card" disabled={!letter.trim()} onClick={copyAppeal}>{copied ? <Check aria-hidden /> : <Copy aria-hidden />}Copy Appeal</Button>
-              <Button className="h-10 rounded-lg" disabled={!letter.trim()} onClick={downloadAppeal}><Download aria-hidden />Download Appeal</Button>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr]">
+          {/* Summary rail */}
+          <Reveal>
+          <aside aria-labelledby="summary-heading" className="h-fit rounded-2xl border bg-card p-5 shadow-card lg:sticky lg:top-24">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 id="summary-heading" className="text-base font-semibold">Fictional Analysis Summary</h2>
+              <span className="rounded-md border border-lavender/30 bg-lavender/10 px-2 py-0.5 text-xs font-medium text-lavender">Potentially contestable · sample only</span>
             </div>
-          </div>
-          <p role="status" aria-live="polite" className="mt-2 min-h-5 text-sm text-secondary">{notice}</p>
-          {!letter.trim() && <div className="mt-3 flex flex-wrap items-center gap-3 border-y py-4"><p className="text-sm text-muted-foreground">Your draft is empty.</p><Button variant="outline" onClick={() => { setLetter(SAMPLE_APPEAL); setDraft(SAMPLE_APPEAL); setNotice(""); }}><RotateCcw aria-hidden />Restore Sample Draft</Button></div>}
-          <Textarea
-            aria-label="Appeal letter"
-            aria-describedby="draft-disclaimer"
-            spellCheck
-            value={letter}
-            onChange={(event) => { setLetter(event.target.value); setDraft(event.target.value); setCopied(false); setNotice(""); }}
-            className="mt-3 min-h-[820px] resize-y rounded-lg bg-card p-5 text-sm leading-7 shadow-card sm:p-10 md:text-sm"
-          />
-        </section>
+            <dl className="mt-4 space-y-4">
+              <div><dt className="text-xs font-medium text-muted-foreground">CLAIM</dt><dd className="mt-1 text-sm leading-relaxed">Individual Health Insurance<br /><span className="text-destructive">Rejected</span></dd></div>
+              <div><dt className="text-xs font-medium text-muted-foreground">STATED REJECTION REASON</dt><dd className="mt-1 text-sm leading-relaxed">Hospitalisation within the initial waiting period.</dd></div>
+              <div><dt className="text-xs font-medium text-muted-foreground">POSSIBLE MISMATCH</dt><dd className="mt-1 text-sm leading-relaxed">The fictional policy has an accidental-injury exception; the fictional medical record describes a fall and wrist fracture.</dd></div>
+            </dl>
+            <p className="mt-4 border-t pt-4 text-xs leading-relaxed text-muted-foreground">Policy inception date, issued policy wording and the insurer’s classification of admission are unverified. A real review may reach a different conclusion.</p>
+          </aside>
+          </Reveal>
+
+          {/* Document editor */}
+          <Reveal delay={120}>
+          <section aria-labelledby="letter-heading" className="overflow-hidden rounded-2xl border bg-card shadow-card">
+            {/* Toolbar */}
+            <div className="flex flex-col justify-between gap-3 border-b bg-muted/50 px-5 py-4 sm:flex-row sm:items-center">
+              <h2 id="letter-heading" className="flex items-center gap-2 text-base font-semibold"><FileText className="size-5 text-secondary" aria-hidden />Appeal Letter <span className="ml-1 text-xs font-normal text-muted-foreground">Draft</span></h2>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" className="bg-card" disabled={!letter.trim()} onClick={copyAppeal}>{copied ? <Check aria-hidden /> : <Copy aria-hidden />}Copy Appeal</Button>
+                <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90" disabled={!letter.trim()} onClick={downloadAppeal}><Download aria-hidden />Download Appeal</Button>
+              </div>
+            </div>
+            <p role="status" aria-live="polite" className="min-h-5 px-5 pt-2 text-sm text-secondary">{notice}</p>
+            {!letter.trim() && <div className="flex flex-wrap items-center gap-3 border-b px-5 py-4"><p className="text-sm text-muted-foreground">Your draft is empty.</p><Button variant="outline" onClick={() => { setLetter(SAMPLE_APPEAL); setDraft(SAMPLE_APPEAL); setNotice(""); }}><RotateCcw aria-hidden />Restore Sample Draft</Button></div>}
+            {/* Paper sheet */}
+            <div className="bg-muted/40 p-4 sm:p-8">
+              <Textarea
+                aria-label="Appeal letter"
+                aria-describedby="draft-disclaimer"
+                spellCheck
+                value={letter}
+                onChange={(event) => { setLetter(event.target.value); setDraft(event.target.value); setCopied(false); setNotice(""); }}
+                className="min-h-[820px] resize-y rounded-xl border bg-card p-6 text-sm leading-7 shadow-card sm:p-10 md:text-sm"
+              />
+            </div>
+          </section>
+          </Reveal>
+        </div>
+
         <div id="draft-disclaimer" role="note" className="mt-5 flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
-          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warning" aria-hidden />
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warning-strong" aria-hidden />
           <p><strong className="text-foreground">Check this draft for accuracy before sending.</strong> Verify every statement, document reference and attachment, and replace all placeholders. This fictional draft is not legal or medical advice. Sending an appeal does not guarantee approval.</p>
         </div>
       </main>

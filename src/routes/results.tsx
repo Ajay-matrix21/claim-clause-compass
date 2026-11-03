@@ -7,11 +7,13 @@ import {
   FileText,
   Quote,
   ScrollText,
+  Sparkles,
   Stethoscope,
 } from "lucide-react";
 import { SiteHeader, SiteFooter, Card, ButtonLink } from "@/components/brand";
 import { cn } from "@/lib/utils";
 import { useClaimWorkflow, WorkflowEmptyState } from "@/components/claim-workflow";
+import { Reveal } from "@/lib/reveal";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -50,6 +52,7 @@ const DEMO_REPORT = {
       title: "Insurer Says",
       icon: Building2,
       source: "Rejection letter (sample)",
+      page: "Page 1",
       body: "“Your claim has been rejected as the hospitalisation falls within the initial waiting period of your policy, which had not been completed on the date of admission.”",
       note: "This is the stated reason taken from the sample rejection letter. It reflects only what the insurer wrote — not whether it is correct.",
       tone: "destructive" as const,
@@ -59,7 +62,8 @@ const DEMO_REPORT = {
       label: "B",
       title: "Policy Says",
       icon: ScrollText,
-      source: "Policy document, p. 12 (sample evidence)",
+      source: "Policy document (sample)",
+      page: "Page 12, Section 4.2",
       body: "“Section 4.2 — Waiting Period: Benefits are payable only after the Insured Person has maintained continuous cover for twenty-four (24) months, except where hospitalisation directly follows an Accidental Injury, in which case this waiting period shall not apply.”",
       note: "Fictional clause with a sample page reference, shown to illustrate how a policy clause is compared against the rejection reason.",
       tone: "secondary" as const,
@@ -69,10 +73,11 @@ const DEMO_REPORT = {
       label: "C",
       title: "Medical Record Shows",
       icon: Stethoscope,
-      source: "Discharge summary, p. 3 (sample evidence)",
+      source: "Discharge summary (sample)",
+      page: "Page 3",
       body: "“History of present illness: the patient slipped on a staircase on 14 March and sustained a wrist fracture requiring surgical fixation under anaesthesia.”",
       note: "Fictional medical evidence with a sample page reference, indicating the admission followed an accidental injury.",
-      tone: "success" as const,
+      tone: "teal" as const,
     },
   ],
   assessment: {
@@ -116,11 +121,19 @@ const DEMO_REPORT = {
   ],
 };
 
-const toneChip: Record<"destructive" | "secondary" | "success", string> = {
+const toneChip: Record<"destructive" | "secondary" | "teal", string> = {
   destructive: "border-destructive/30 bg-destructive/10 text-destructive",
   secondary: "border-secondary/30 bg-secondary/10 text-secondary",
-  success: "border-success/30 bg-success/10 text-success",
+  teal: "border-teal/30 bg-teal/10 text-teal",
 };
+
+function PageRef({ children }: { children: string }) {
+  return (
+    <span className="inline-flex items-center rounded-md border border-warning/40 bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning-strong">
+      {children}
+    </span>
+  );
+}
 
 function ReportField({ label, value, className }: { label: string; value: string; className?: string }) {
   return (
@@ -145,7 +158,7 @@ function Results() {
           aria-label="Demo notice"
           className="flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm"
         >
-          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warning" />
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warning-strong" />
           <p className="text-foreground">
             <strong>DEMO — FICTIONAL SAMPLE DATA.</strong> Everything on this page is invented for demonstration. It is
             not a real analysis of any uploaded document, does not represent any real policy, insurer or regulation, and
@@ -154,24 +167,28 @@ function Results() {
         </div>
 
         {/* Report header */}
-        <header className="mt-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-primary">Claim Analysis Report</h1>
-            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-              <span className="font-mono">Sample claim reference: {DEMO_REPORT.reference}</span>
-              <span className="inline-flex items-center rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 text-xs font-medium text-warning">
-                Sample Analysis
-              </span>
-            </p>
+        <header className="bg-hero relative mt-8 overflow-hidden rounded-3xl p-6 md:p-8">
+          <div className="orb orb-blue right-[-10%] top-[-40%] size-[20rem]" />
+          <div className="relative flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight text-white">Claim Analysis Report</h1>
+              <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70">
+                <span className="font-mono">Sample claim reference: {DEMO_REPORT.reference}</span>
+                <span className="inline-flex items-center rounded-full border border-warning/50 bg-warning/15 px-2.5 py-0.5 text-xs font-medium text-warning">
+                  Sample Analysis
+                </span>
+              </p>
+            </div>
+            <ButtonLink to="/upload" variant="outline" resetAnalysis className="border-white/25 bg-white/5 text-white hover:bg-white/10">
+              <ClipboardList className="size-4" /> Start New Analysis
+            </ButtonLink>
           </div>
-          <ButtonLink to="/upload" variant="outline" resetAnalysis>
-            <ClipboardList className="size-4" /> Start New Analysis
-          </ButtonLink>
         </header>
 
         <div className="mt-5"><ButtonLink to="/upload" variant="outline"><ArrowLeft className="size-4" aria-hidden />Back to Upload</ButtonLink></div>
 
         {/* Claim summary */}
+        <Reveal>
         <Card className="mt-8">
           <h2 className="text-lg font-semibold">Claim Summary</h2>
           <dl className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -189,25 +206,36 @@ function Results() {
               <dd className="mt-1 text-sm font-medium">{summary.insurerReason}</dd>
             </div>
           </dl>
-          <div className="mt-5 rounded-lg border border-secondary/25 bg-secondary/5 p-4">
-            <dt className="text-xs font-medium uppercase tracking-wide text-secondary">Assessment</dt>
-            <dd className="mt-1 text-sm font-medium text-secondary">
+          <div className="mt-5 rounded-lg border border-lavender/30 bg-lavender/10 p-4">
+            <dt className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-lavender">
+              <Sparkles className="size-3.5" aria-hidden /> Assessment
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-foreground">
               {summary.assessment} <span className="font-normal text-muted-foreground">{summary.assessmentNote}</span>
             </dd>
           </div>
         </Card>
+        </Reveal>
 
         {/* Evidence comparison */}
         <section aria-labelledby="comparison-heading" className="mt-10">
-          <h2 id="comparison-heading" className="text-xl font-semibold tracking-tight">
-            Evidence Comparison
-          </h2>
+          <Reveal>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 id="comparison-heading" className="text-xl font-semibold tracking-tight">
+              Evidence Comparison
+            </h2>
+            <span className="rounded-full border border-teal/30 bg-teal/10 px-2.5 py-0.5 text-xs font-medium text-teal">
+              Sample extracted facts
+            </span>
+          </div>
           <p className="mt-1 text-sm text-muted-foreground">
             What each sample document says about the same question. All content is fictional.
           </p>
+          </Reveal>
           <div className="mt-5 grid gap-5 lg:grid-cols-3">
-            {columns.map((col) => (
-              <Card key={col.key} className="flex flex-col gap-3">
+            {columns.map((col, i) => (
+              <Reveal key={col.key} delay={i * 120} className="h-full">
+              <Card className="flex h-full flex-col gap-3 transition-shadow duration-300 hover:shadow-lift">
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden
@@ -224,17 +252,28 @@ function Results() {
                   </h3>
                 </div>
                 <p className="border-l-2 border-border pl-3 text-sm leading-relaxed text-foreground">{col.body}</p>
-                <p className="text-xs text-muted-foreground">{col.source}</p>
+                <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  {col.source} <PageRef>{col.page}</PageRef>
+                </p>
                 <p className="mt-auto text-xs leading-relaxed text-muted-foreground">{col.note}</p>
               </Card>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* AI assessment */}
+        <Reveal>
         <Card className="mt-10">
-          <h2 className="text-lg font-semibold">AI Assessment</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Generated for the fictional sample scenario only.</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-lg font-semibold">AI Assessment</h2>
+            <span className="rounded-full border border-lavender/30 bg-lavender/10 px-2.5 py-0.5 text-xs font-medium text-lavender">
+              AI interpretation — fictional
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Generated for the fictional sample scenario only. Unlike the quoted facts above, these blocks are interpretation, not document content.
+          </p>
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
             {[
               { title: "What appears to conflict", text: assessment.conflicts },
@@ -249,23 +288,26 @@ function Results() {
             ))}
           </div>
         </Card>
+        </Reveal>
 
         {/* Evidence trail */}
         <section aria-labelledby="trail-heading" className="mt-10">
+          <Reveal>
           <h2 id="trail-heading" className="text-xl font-semibold tracking-tight">Evidence Trail</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Each finding with its source, page and supporting quotation from the fictional sample.
           </p>
+          </Reveal>
           <ol className="mt-5 grid gap-5">
             {trail.map((item, i) => (
-              <li key={item.finding}>
-                <Card className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
+              <Reveal as="li" key={item.finding} delay={i * 100}>
+                <Card>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
                         <FileText className="size-3.5" aria-hidden /> {item.document}
                       </span>
-                      <span>{item.page}</span>
+                      <PageRef>{item.page}</PageRef>
                     </div>
                     <h3 className="mt-2 text-sm font-semibold">
                       {i + 1}. {item.finding}
@@ -277,26 +319,29 @@ function Results() {
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.supports}</p>
                   </div>
                 </Card>
-              </li>
+              </Reveal>
             ))}
           </ol>
         </section>
 
         {/* Next steps */}
+        <Reveal>
         <Card className="mt-10">
           <h2 className="text-lg font-semibold">Next Steps</h2>
           <p className="mt-1 text-xs text-muted-foreground">Practical suggestions for the fictional sample scenario.</p>
           <ul className="mt-4 grid gap-3">
             {nextSteps.map((step) => (
               <li key={step} className="flex gap-3 text-sm leading-relaxed">
-                <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-secondary" />
+                <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-teal" />
                 {step}
               </li>
             ))}
           </ul>
         </Card>
+        </Reveal>
 
         {/* CTA */}
+        <Reveal>
         <div className="mt-10 flex flex-col items-start gap-4 rounded-2xl border bg-card p-6 shadow-card sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold">Prepare Your Appeal</h2>
@@ -304,10 +349,11 @@ function Results() {
               Turn the sample findings into a structured starting point for an appeal letter.
             </p>
           </div>
-          <ButtonLink to="/appeal">
+          <ButtonLink to="/appeal" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
             <ArrowLeft className="size-4 rotate-180" aria-hidden /> Prepare Appeal Letter
           </ButtonLink>
         </div>
+        </Reveal>
       </main>
       <SiteFooter />
     </div>
