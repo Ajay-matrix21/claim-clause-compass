@@ -29,6 +29,10 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-warning-strong: var(--warning-strong);
+  --color-teal: var(--teal);
+  --color-lavender: var(--lavender);
+  --color-midnight: var(--midnight);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -36,28 +40,33 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #f8f7fc;
-  --foreground: #201a31;
+  --background: #f7f9fc;
+  --foreground: #101b35;
   --card: #ffffff;
-  --card-foreground: #201a31;
+  --card-foreground: #101b35;
   --popover: #ffffff;
-  --popover-foreground: #201a31;
-  --primary: #211447;
+  --popover-foreground: #101b35;
+  --primary: #172544;
   --primary-foreground: #ffffff;
-  --secondary: #6941c6;
+  --secondary: #356ae6;
   --secondary-foreground: #ffffff;
-  --muted: #efedf7;
-  --muted-foreground: #777387;
-  --accent: #f0ebfb;
-  --accent-foreground: #6941c6;
-  --destructive: #c74747;
+  --muted: #edf1f7;
+  --muted-foreground: #64748b;
+  --accent: #eef2fe;
+  --accent-foreground: #356ae6;
+  --destructive: #c74545;
   --destructive-foreground: #ffffff;
-  --success: #16865d;
-  --warning: #c58a26;
-  --border: #e6e3f0;
-  --input: #e6e3f0;
-  --ring: #6941c6;
-  --shadow-card: 0 1px 2px rgb(33 20 71 / 0.04), 0 8px 24px -12px rgb(33 20 71 / 0.12);
+  --success: #159b72;
+  --warning: #f4b740;
+  --warning-strong: #8a5a00;
+  --teal: #16b8a6;
+  --lavender: #a78bfa;
+  --midnight: #101b35;
+  --border: #e3e8f2;
+  --input: #e3e8f2;
+  --ring: #356ae6;
+  --shadow-card: 0 1px 2px rgb(16 27 53 / 0.05), 0 12px 32px -16px rgb(16 27 53 / 0.14);
+  --shadow-lift: 0 2px 6px rgb(16 27 53 / 0.06), 0 20px 48px -20px rgb(23 37 68 / 0.28);
 }
 
 @layer base {
@@ -72,3 +81,109 @@
 }
 
 @utility shadow-card { box-shadow: var(--shadow-card); }
+@utility shadow-lift { box-shadow: var(--shadow-lift); }
+
+/* ---- Hero surfaces ---- */
+
+@utility bg-hero {
+  background: linear-gradient(115deg, #101b35 0%, #172544 38%, #1d3264 68%, #25406f 100%);
+  background-size: 220% 220%;
+  animation: hero-pan 18s ease-in-out infinite alternate;
+}
+
+@utility glass {
+  background: rgb(255 255 255 / 0.07);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.14);
+}
+
+@utility glass-strong {
+  background: rgb(255 255 255 / 0.12);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgb(255 255 255 / 0.2);
+}
+
+/* ---- Animated gradient orbs ---- */
+
+@utility orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+  animation: orb-drift 22s ease-in-out infinite alternate;
+}
+
+@utility orb-blue { background: radial-gradient(circle, rgb(53 106 230 / 0.5), transparent 70%); }
+@utility orb-lavender { background: radial-gradient(circle, rgb(167 139 250 / 0.38), transparent 70%); animation-delay: -8s; }
+@utility orb-teal { background: radial-gradient(circle, rgb(22 184 166 / 0.32), transparent 70%); animation-delay: -14s; }
+
+/* ---- Scanning + float effects ---- */
+
+@utility scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: linear-gradient(to bottom, transparent, rgb(53 106 230 / 0.16), rgb(22 184 166 / 0.2), transparent);
+  animation: scan-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@utility float-soft { animation: float-y 6s ease-in-out infinite; }
+@utility float-soft-delayed { animation: float-y 7s ease-in-out -3s infinite; }
+
+/* ---- Scroll reveal ---- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Progress shimmer ---- */
+
+@utility progress-shimmer {
+  background-image: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes hero-pan {
+  from { background-position: 0% 40%; }
+  to { background-position: 100% 60%; }
+}
+
+@keyframes orb-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(48px, -36px, 0) scale(1.12); }
+}
+
+@keyframes scan-sweep {
+  0% { top: -72px; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .bg-hero, .orb, .scan-line, .float-soft, .float-soft-delayed, .progress-shimmer {
+    animation: none;
+  }
+}
