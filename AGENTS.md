@@ -11,3 +11,4 @@
 
 - Keep the current journey in a React context provider mounted above the routes, never in module-global mutable state or browser storage, so files survive navigation but remain isolated per app instance and clear on refresh or reset.
 - Keep the editable appeal state in the appeal page, with its current text retained by the journey provider on edits; browser-only text delivery belongs in a dedicated utility so editing and export need no uploads or server processing.
+- The journey runs upload → /processing → /results; /processing is a timed, clearly-labelled demo transition (no document reads) that auto-navigates to /results and must stay guarded by the workflow provider's ready state.
