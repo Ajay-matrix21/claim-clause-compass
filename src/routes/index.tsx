@@ -105,7 +105,16 @@ function Index() {
       <SiteHeader />
       <main>
         {/* Hero */}
-        <section className="bg-hero relative overflow-hidden">
+        <section
+          className="bg-hero relative overflow-hidden"
+          onPointerMove={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+            e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+          }}
+        >
+          <div className="hero-grid pointer-events-none absolute inset-0" />
+          <div className="hero-spotlight pointer-events-none absolute inset-0" />
           <div className="orb orb-blue left-[-10%] top-[-20%] size-[34rem]" />
           <div className="orb orb-lavender right-[-8%] top-[10%] size-[28rem]" />
           <div className="orb orb-teal bottom-[-30%] left-[30%] size-[30rem]" />
