@@ -95,9 +95,9 @@ function Upload() {
               type="button"
               onClick={submit}
               disabled={loading}
-              className="h-10 rounded-lg bg-secondary px-5 text-secondary-foreground hover:bg-secondary/90"
+              className="h-10 rounded-lg bg-secondary px-5 text-secondary-foreground hover:bg-secondary/90 group/cta transition-all motion-safe:hover:-translate-y-0.5 hover:shadow-lift active:scale-95"
             >
-              {loading ? <><LoaderCircle className="motion-safe:animate-spin" aria-hidden />Opening fictional sample…</> : <>Analyze My Claim <ArrowRight className="size-4" aria-hidden /></>}
+              {loading ? <><LoaderCircle className="motion-safe:animate-spin" aria-hidden />Opening fictional sample…</> : <>Analyze My Claim <ArrowRight className="size-4 transition-transform motion-safe:group-hover/cta:translate-x-1" aria-hidden /></>}
             </Button>
           </div>
           {loading && <p role="status" className="mt-3 text-sm text-muted-foreground">Opening fictional demo data — no documents are being processed.</p>}

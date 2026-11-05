@@ -84,14 +84,17 @@ export function FileUploadCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border bg-card p-5 shadow-card transition-shadow duration-300 hover:shadow-lift",
+        "group rounded-2xl border bg-card p-5 shadow-card transition-all duration-300 ease-out motion-safe:hover:-translate-y-1 hover:shadow-lift",
+        accent === "blue" && "hover:border-secondary/40",
+        accent === "lavender" && "hover:border-lavender/50",
+        accent === "teal" && "hover:border-teal/40",
         file && a.selectedRing,
         missing && !file && "border-destructive/50",
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className={cn("grid size-10 shrink-0 place-items-center rounded-xl", a.icon)}>
+          <span className={cn("grid size-10 shrink-0 place-items-center rounded-xl transition-transform duration-300 motion-safe:group-hover:-rotate-6 motion-safe:group-hover:scale-110", a.icon)}>
             <FileText className="size-5" aria-hidden />
           </span>
           <div>
@@ -113,23 +116,23 @@ export function FileUploadCard({
       />
 
       {file ? (
-        <div className={cn("mt-4 rounded-xl p-4", a.selectedBg)}>
+        <div className={cn("mt-4 rounded-xl p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 duration-300", a.selectedBg)}>
           <div className="flex items-center gap-3">
             <FileText className="size-5 shrink-0 text-teal" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{file.name}</p>
               <p className="text-xs text-muted-foreground">{typeLabel(file)} · {formatFileSize(file.size)}</p>
             </div>
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-teal/10 px-2 py-0.5 text-[11px] font-medium text-teal">
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-teal/10 px-2 py-0.5 text-[11px] font-medium text-teal shadow-[0_0_0_3px_color-mix(in_oklab,var(--teal)_12%,transparent)] motion-safe:animate-in motion-safe:zoom-in-50 duration-500">
               <CheckCircle2 className="size-3" aria-hidden /> Ready
             </span>
           </div>
           <div className="mt-3 flex gap-2">
-            <Button disabled={disabled} variant="outline" size="sm" type="button" onClick={browse} className="bg-card">
-              <RefreshCw className="size-3.5" /> Replace
+            <Button disabled={disabled} variant="outline" size="sm" type="button" onClick={browse} className="group/r bg-card transition-transform active:scale-95">
+              <RefreshCw className="size-3.5 transition-transform duration-500 motion-safe:group-hover/r:rotate-180" /> Replace
             </Button>
-            <Button disabled={disabled} variant="outline" size="sm" type="button" onClick={() => { onChange(null); setError(null); }} className="bg-card text-destructive hover:bg-destructive/10">
-              <Trash2 className="size-3.5" /> Remove
+            <Button disabled={disabled} variant="outline" size="sm" type="button" onClick={() => { onChange(null); setError(null); }} className="group/d bg-card text-destructive transition-transform hover:bg-destructive/10 active:scale-95">
+              <Trash2 className="size-3.5 transition-transform motion-safe:group-hover/d:-rotate-12 motion-safe:group-hover/d:scale-110" /> Remove
             </Button>
           </div>
         </div>
@@ -143,11 +146,11 @@ export function FileUploadCard({
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
           className={cn(
-            "mt-4 h-auto w-full flex-col gap-0 whitespace-normal rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors duration-300 hover:bg-accent/50",
-            dragging && a.dropActive,
+            "mt-4 h-auto w-full flex-col gap-0 whitespace-normal rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all duration-300 hover:border-secondary/60 hover:bg-accent/60 active:scale-[0.98] group/drop",
+            dragging && cn(a.dropActive, "scale-[1.02]"),
           )}
         >
-          <UploadCloud className="size-7 text-secondary" />
+          <UploadCloud className={cn("size-7 text-secondary transition-transform duration-300 motion-safe:group-hover/drop:-translate-y-1 motion-safe:group-hover/drop:scale-110", dragging && "motion-safe:animate-bounce")} />
           <p className="mt-2 text-sm font-medium">Drag and drop, or <span className="text-secondary">browse files</span></p>
           <p className="mt-1 text-xs text-muted-foreground">PDF, JPG or PNG</p>
         </Button>
